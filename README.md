@@ -1,3 +1,41 @@
+# 🎙️ AI Interview Voice Agent
+
+A voice-interactive web application designed to simulate real interview scenarios using dynamic question sets. Built using **Next.js**, **Supabase**, and **Tailwind CSS**, this project aims to help users practice interviews in a more engaging and intelligent way.
+
+---
+
+## 🚀 Project Overview
+
+This app mimics a mock interview environment where users can sign in, get asked interview questions, and respond in a simulated flow. The primary goal was to combine voice interactivity with a clean UI and real-time question rendering — creating a helpful tool for students and job seekers.
+
+---
+
+## ✨ Key Features
+
+- 🎤 **Voice-based interview simulation** (planned)
+- 🔐 **User authentication with Supabase**
+- 🧩 **Modular UI components** with Radix & ShadCN
+- 🧠 **Question generation and tracking (WIP)**
+- 📊 **Dashboard to monitor interview sessions**
+
+---
+
+## 🛠 Tech Stack
+
+- **Frontend**: Next.js 14
+- **Backend/Auth**: Supabase
+- **Styling**: Tailwind CSS + Radix UI + ShadCN
+- **Other**: React Hooks, Context API, Modern component architecture
+
+---
+
+## 📁 Folder Structure
+
+
+
+
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
