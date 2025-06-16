@@ -1,20 +1,24 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Image from 'next/image'
-import { Clock, Info, Video } from 'lucide-react'
+import { Clock, Info, Loader2Icon, Video } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useParams } from 'next/navigation'
 import { supabase } from '@/services/supabaseClient'
 import { toast } from 'sonner'
+import { InterviewDataContext } from '@/context/InterviewDataContext'
+import { useRouter } from 'next/navigation'
 function Interview() {
   const {interview_id}=useParams();
   console.log(interview_id)
   const [interviewData,setInterviewData]=useState();
   const [userName,setUserName]=useState();
   const [loading,setLoading]=useState(false);
+  const {interviewInfo,setInterviewInfo}=useContext(InterviewDataContext);
+  const router=useRouter();
   useEffect(()=>{
-    interview_id&&GetInterviewDetails();
+    interview_id && GetInterviewDetails();
   },[interview_id])
   const GetInterviewDetails=async()=>{
     setLoading(true);
@@ -24,16 +28,29 @@ function Interview() {
       .select("jobPosition,jobDescription,duration,type")
       .eq('interview_id',interview_id);
       setInterviewData(Interviews[0]);
+      setLoading(false);
       if(Interviews?.length==0){
         toast('Incorrect Interview Link')
         return;
       }
-      setLoading(false);
     }catch(e){
       setLoading(false);
       toast('Incorrect Interview Link')
     }
-    
+  }
+  const onJoinInterview=async()=>{
+      setLoading(true);
+      let { data: Interviews, error } = await supabase
+      .from('Interviews')
+      .select("*")
+      .eq('interview_id',interview_id);
+      console.log(Interviews[0]);
+      setInterviewInfo({
+        userName:userName,
+        interviewData:Interviews[0]
+      });
+      router.push('/interview/'+interview_id+'/start')
+      setLoading(false);
   }
   return (
     <div className='px-10 md:px-28 lg:px-48 xl:px-64 mt-6 '>
@@ -58,7 +75,7 @@ function Interview() {
             </ul>
           </div>
         </div>
-        <Button className={'mt-6 w-full font-bold'} disabled={loading || !userName}><Video/>Join Interview</Button>
+        <Button className={'mt-6 w-full font-bold'} disabled={loading || !userName} onClick={()=>onJoinInterview()}><Video/>{loading&&<Loader2Icon/>}Join Interview</Button>
       </div> 
     </div>
   )
