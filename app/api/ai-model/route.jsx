@@ -12,21 +12,21 @@ export async function POST(req){
     console.log(FINAL_PROMPT);
 
     try{
-    const openai=new OpenAI({
-        baseURL: "https://openrouter.ai/api/v1",
-        apiKey: process.env.OPENROUTER_API_KEY,
-        
-    })
-    const completion = await openai.chat.completions.create({
-        model: "mistralai/mistral-7b-instruct",
-        messages: [
-        { role: "user", content:FINAL_PROMPT }
-        ],
-        // response_format:'json'
-    })
-    console.log(completion.choices[0].message)
-    return NextResponse.json(completion.choices[0].message)
-}
+        const openai=new OpenAI({
+            baseURL: "https://openrouter.ai/api/v1",
+            apiKey: process.env.OPENROUTER_API_KEY,
+            
+        })
+        const completion = await openai.chat.completions.create({
+            model: "mistralai/mistral-7b-instruct",
+            messages: [
+            { role: "user", content:FINAL_PROMPT }
+            ],
+            // response_format:'json'
+        })
+        console.log(completion.choices[0].message)
+        return NextResponse.json(completion.choices[0].message)
+    }
     catch(e){
         console.log(e);
         return NextResponse.json(e)
