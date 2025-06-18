@@ -2,23 +2,27 @@
 import { InterviewDataContext } from '@/context/InterviewDataContext';
 import { Mic, Phone, Timer } from 'lucide-react';
 import Image from 'next/image';
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Vapi from "@vapi-ai/web"
 import AlertConfirmation from './_components/AlertConfirmation';
-
+import { toast } from 'sonner';
 
 function StartInterview() {
-    const {interviewInfo,setInterviewInfo}=useContext(InterviewDataContext);
-    const vapi=new Vapi(process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY);
-    useEffect(()=>{
-      interviewInfo&& startCall();
-    },[interviewInfo])
-    const startCall=()=>{
-      let questionList="";
-      interviewInfo?.interviewData?.questionList?.forEach((item,index) => {
-        questionList=item?.question+","+questionList
-      });
-     const assistantOptions = {
+  const {interviewInfo,setInterviewInfo}=useContext(InterviewDataContext);
+  const vapi=new Vapi(process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY);
+  //const [activeUser,setActiveUser]=useState(false);
+  const [isRecruiterSpeaking, setIsRecruiterSpeaking] = useState(false);
+  const [isUserSpeaking, setIsUserSpeaking] = useState(false);
+
+  useEffect(()=>{
+    interviewInfo&& startCall();
+  },[interviewInfo])
+  const startCall=()=>{
+    let questionList="";
+    interviewInfo?.interviewData?.questionList?.forEach((item,index) => {
+      questionList=item?.question+","+questionList
+    });
+    const assistantOptions = {
         name: "AI Recruiter",
         firstMessage: "Hi"+ interviewInfo?.userName+", how are you? Ready for your interview on"+ interviewInfo?.interviewData?.jobPosition+"?",
         transcriber: {
@@ -62,12 +66,34 @@ function StartInterview() {
             },
           ],
         },
-      };
-      vapi.start(assistantOptions)
-    }
-    const stopInterview=()=>{
-        vapi.stop();
-      }
+    };
+    vapi.start(assistantOptions)
+  }
+  const stopInterview=()=>{
+    setIsRecruiterSpeaking(false);
+    setIsUserSpeaking(false);
+    vapi.stop();
+  }
+  vapi.on("call-start",()=>{
+    console.log("Call has started");
+    toast('Call Connected...')
+  })
+  vapi.on("speech-start",()=>{
+    console.log("Assistant speech has started");
+    setIsRecruiterSpeaking(true);
+    setIsUserSpeaking(false);
+  })
+  vapi.on("speech-end",()=>{
+    console.log("Assistant speech has ended");
+    setIsRecruiterSpeaking(false);
+    setIsUserSpeaking(true);
+  })
+  vapi.on("call-end",()=>{
+    console.log("Call has ended");
+    setIsRecruiterSpeaking(false);
+    setIsUserSpeaking(false);
+    toast('Call Disconnected...')
+  })
   return (
     <div className='p-20 lg:px-48 xl:px-56'>
       <h2 className='font-bold text-xl flex justify-between'>AI Interview Session
@@ -78,12 +104,17 @@ function StartInterview() {
         </h2>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-8 mt-6'>
             <div className='bg-white h-[400px] rounded-lg border flex flex-col gap-3 items-center justify-center'>
+              <div className='relative'>
+                {isRecruiterSpeaking && (<span className='absolute inset-0 rounded-full bg-purple-500 opacity-75 animate-ping'></span>)}
                 <Image src={'/ai.png'} width={100} height={100} alt='photo1' className='w-[60px] h-[60px] rounded-full object-cover'/>
+              </div>
                 <h2>AI Recruiter</h2>
             </div>
             <div className='bg-white h-[400px] rounded-lg border flex flex-col gap-3 items-center justify-center'>
-                {/* <Image src={'/ai2.png'} width={100} height={100} alt='photo2' className='w-[60px] h-[60px] rounded-full object-cover'/> */}
-                <h2 className='text-2xl bg-primary text-white p-3 rounded-full px-5'>{interviewInfo?.userName[0]}</h2>
+              <div className='relative'>
+                {isUserSpeaking && (<span className='absolute inset-0 rounded-full bg-green-500 opacity-75 animate-ping'></span>)}
+                <h2 className='text-2xl bg-primary h-[50px] w-[50px] text-white p-3 rounded-full px-5'>{interviewInfo?.userName[0]}</h2>
+              </div>
                 <h2>{interviewInfo?.userName}</h2>
             </div>
         </div>
