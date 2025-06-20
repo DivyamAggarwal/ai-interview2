@@ -2,10 +2,12 @@
 import { InterviewDataContext } from '@/context/InterviewDataContext';
 import { Mic, Phone, Timer } from 'lucide-react';
 import Image from 'next/image';
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import Vapi from "@vapi-ai/web"
 import AlertConfirmation from './_components/AlertConfirmation';
 import { toast } from 'sonner';
+import TimerComponent from './_components/TimerComponent';
+import axios from 'axios';
 
 function StartInterview() {
   const {interviewInfo,setInterviewInfo}=useContext(InterviewDataContext);
@@ -13,11 +15,14 @@ function StartInterview() {
   //const [activeUser,setActiveUser]=useState(false);
   const [isRecruiterSpeaking, setIsRecruiterSpeaking] = useState(false);
   const [isUserSpeaking, setIsUserSpeaking] = useState(false);
-
+  const [startTimer, setStartTimer] = useState(false);
+  const [conversation,setConversation]=useState();
   useEffect(()=>{
     interviewInfo&& startCall();
   },[interviewInfo])
-  const startCall=()=>{
+  // const vapiRef = useRef();
+  
+ const startCall=()=>{
     let questionList="";
     interviewInfo?.interviewData?.questionList?.forEach((item,index) => {
       questionList=item?.question+","+questionList
@@ -72,11 +77,13 @@ function StartInterview() {
   const stopInterview=()=>{
     setIsRecruiterSpeaking(false);
     setIsUserSpeaking(false);
+    setStartTimer(false);
     vapi.stop();
   }
   vapi.on("call-start",()=>{
     console.log("Call has started");
-    toast('Call Connected...')
+    toast('Call Connected...');
+    setStartTimer(true);
   })
   vapi.on("speech-start",()=>{
     console.log("Assistant speech has started");
@@ -93,13 +100,28 @@ function StartInterview() {
     setIsRecruiterSpeaking(false);
     setIsUserSpeaking(false);
     toast('Call Disconnected...')
+    setStartTimer(false);
+    GenerateFeedback(); 
   })
+  vapi.on("message",(message)=>{
+    console.log(message?.conversation);
+    setConversation(message?.conversation)
+  })
+   const GenerateFeedback=async()=>{
+    const result=await axios.post('/api/ai-feedback',{
+      conversation:conversation
+    })
+    console.log(result?.data)
+    const Content=result.data.content;
+    const FINAL_CONTENT=Content.replace('```json','').replace('```','');
+    console.log(FINAL_CONTENT);
+  }
   return (
     <div className='p-20 lg:px-48 xl:px-56'>
       <h2 className='font-bold text-xl flex justify-between'>AI Interview Session
         <span className='flex gap-2 items-center'>
             <Timer/>
-            00:00:00
+            <TimerComponent start={startTimer}/>
         </span> 
         </h2>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-8 mt-6'>
