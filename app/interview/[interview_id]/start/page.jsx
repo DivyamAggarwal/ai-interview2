@@ -8,6 +8,9 @@ import AlertConfirmation from './_components/AlertConfirmation';
 import { toast } from 'sonner';
 import TimerComponent from './_components/TimerComponent';
 import axios from 'axios';
+import { supabase } from '@/services/supabaseClient';
+import { useParams,useRouter } from 'next/navigation';
+
 
 function StartInterview() {
   const {interviewInfo,setInterviewInfo}=useContext(InterviewDataContext);
@@ -17,6 +20,8 @@ function StartInterview() {
   const [isUserSpeaking, setIsUserSpeaking] = useState(false);
   const [startTimer, setStartTimer] = useState(false);
   const [conversation,setConversation]=useState();
+  const {interview_id}=useParams()
+  const router=useRouter()
   useEffect(()=>{
     interviewInfo&& startCall();
   },[interviewInfo])
@@ -115,6 +120,19 @@ function StartInterview() {
     const Content=result.data.content;
     const FINAL_CONTENT=Content.replace('```json','').replace('```','');
     console.log(FINAL_CONTENT);
+    const {data,error}=await supabase
+      .from('interview-feedback')
+      .insert([
+        {userName:interviewInfo?.userName,
+          userEmail:interviewInfo?.userEmail,
+          interview_id:interview_id,
+          feedback:JSON.parse(FINAL_CONTENT),
+          recommendation:false
+        }
+      ])
+      .select()
+      console.log(data)
+      router.replace('/interview/completed');
   }
   return (
     <div className='p-20 lg:px-48 xl:px-56'>
