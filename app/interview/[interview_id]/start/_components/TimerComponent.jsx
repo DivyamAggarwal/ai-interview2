@@ -18,10 +18,13 @@ function TimerComponent({ start }) {
   }, [start]);
 
   const formatTime = (sec) => {
-    const h = String(Math.floor(sec / 3600)).padStart(2, '0');
+    const h = Math.floor(sec / 3600);
     const m = String(Math.floor((sec % 3600) / 60)).padStart(2, '0');
     const s = String(sec % 60).padStart(2, '0');
-    return `${h}:${m}:${s}`;
+
+    return h > 0
+      ? `${String(h).padStart(2, '0')}:${m}:${s}`  // HH:MM:SS if hours > 0
+      : `${m}:${s}`;                               // MM:SS otherwise
   };
 
   return <span>{formatTime(seconds)}</span>;

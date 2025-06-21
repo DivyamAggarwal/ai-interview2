@@ -112,7 +112,7 @@ Depends on this Interview Conversation between assitant and user,
 Give me feedback for user interview. Give me rating out of 10 for technical Skills,
 Communication, Problem Solving, Experince. Also give me summery in 3 lines
 about the interview and one line to let me know whether is recommanded
-for hire or not with msg. Give me response in JSON format
+for hire or not with msg. Give me response in JSON format provide me more crisp recommendation what is the opinion
 {
   feedback:{
     rating:{
@@ -121,7 +121,7 @@ for hire or not with msg. Give me response in JSON format
       problemSolving:4,
       experince:7
     },
-    summery:<in 3 Line>,
+    summary:<in 3 Line>,
     Recommendation:"",
     RecommendationMsg:""
   }
