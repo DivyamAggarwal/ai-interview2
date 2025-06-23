@@ -7,7 +7,11 @@ import { supabase } from '@/services/supabaseClient';
 function Login() {
     const signInWithGoogle=async()=>{
         const {error}=await supabase.auth.signInWithOAuth({
-            provider:'google'
+            provider:'google',
+            options: {
+            // 👇 Highlight: Redirect to /auth after login
+            redirectTo: `${process.env.NEXT_PUBLIC_HOST_URL}/auth`
+          }
         })
         if(error){
             console.error('Error:',error.message)

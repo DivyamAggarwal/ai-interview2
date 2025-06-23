@@ -6,9 +6,12 @@ import { toast } from "sonner";
 function InterviewCard({interview}) {
     const copyLink=()=>{
         const url=process.env.NEXT_PUBLIC_HOST_URL+'/interview/'+interview?.interview_id;
-    navigator.clipboard.writeText(url);
-    toast("Link copied to clipboard!");
-  }
+        navigator.clipboard.writeText(url);
+        toast("Link copied to clipboard!");
+    }
+    const onSend=()=>{
+        window.location.href="mailto:divyam7@gmail.com?subject=Interview Link&body=Hi, I would like to share the interview link with you: "+process.env.NEXT_PUBLIC_HOST_URL+'/interview/'+interview?.interview_id;
+    }
   return (
     <div className='p-5 bg-white rounded-lg shadow hover:shadow-lg transition-shadow'>
       <div className='flex items-center justify-between '>
@@ -21,7 +24,7 @@ function InterviewCard({interview}) {
       </div>
       <div className='mt-5 flex gap-4 w-full'>
         <Button variant={'outline'} onClick={copyLink}><Copy/>Copy Link</Button>
-        <Button ><Send/>Send</Button>
+        <Button onClick={onSend}><Send/>Send</Button>
       </div>
     </div>
   )

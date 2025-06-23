@@ -2,9 +2,12 @@
 import { UserDetailContext } from '@/context/UserDetailContext';
 import { supabase } from '@/services/supabaseClient'
 import React,{useContext, useEffect, useState} from 'react'
-
+import { useRouter } from 'next/navigation'; 
+import { usePathname } from 'next/navigation';
 function Provider({children}) {
     const [user,setUser]=useState();
+    const router = useRouter();
+    const pathname = usePathname()
     useEffect(()=>{
         CreateNewUser();
     },[])
@@ -24,11 +27,16 @@ function Provider({children}) {
                         profile_photo:user?.user_metadata?.avatar_url
                     }
                 ])
+                .select();
                 console.log(data);
-                setUser(data);
+                // setUser(data);
+                setUser(data?.[0]); 
+                if (pathname === "/auth") router.push("/dashboard");
+                
                 return;
             }
             setUser(Users[0]);
+            if (pathname === "/auth") router.push("/dashboard");
         })
     }
   return (
