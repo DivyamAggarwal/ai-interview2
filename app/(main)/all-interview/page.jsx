@@ -5,10 +5,8 @@ import React, { useEffect, useState } from "react";
 import Link from 'next/link';
 import { supabase } from "@/services/supabaseClient";
 import { useUser } from "@/app/provider";
-import InterviewCard from "./InterviewCard";
-
-
-function LatestInterviewsList() {
+import InterviewCard from "../dashboard/_components/InterviewCard";
+function AllInterview() {
   const [interviewList, setInterviewList] = useState([]);
   const { user } = useUser();
 
@@ -24,7 +22,6 @@ function LatestInterviewsList() {
       .select('*')
       .eq('userEmail', user?.email)
       .order('id', { ascending: false })
-      .limit(6);
 
     if (error) {
       console.error("Error fetching interviews:", error);
@@ -37,7 +34,7 @@ function LatestInterviewsList() {
 
   return (
     <div className="my-5">
-      <h2 className="font-bold text-2xl">Previously Created Interview</h2>
+      <h2 className="font-bold text-2xl">All Previously Created Interview</h2>
 
       {interviewList?.length === 0 && (
         <div className="p-4 flex flex-col gap-4 items-center mt-5 bg-white">
@@ -59,4 +56,4 @@ function LatestInterviewsList() {
   );
 }
 
-export default LatestInterviewsList;
+export default AllInterview
