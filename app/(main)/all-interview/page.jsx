@@ -39,7 +39,7 @@ function AllInterview() {
       {interviewList?.length === 0 && (
         <div className="p-4 flex flex-col gap-4 items-center mt-5 bg-white">
           <Video className="h-10 w-10 text-primary" />
-          <h2>You have any interview created</h2>
+          <h2>You don't have any interview created</h2>
           <Link href={'/dashboard/create-interview'} className='p-5 cursor-pointer'>
             <Button><Plus />Create New Interview</Button>
           </Link>
