@@ -1,7 +1,7 @@
 "use client"
 import { SidebarProvider,SidebarTrigger } from "@/components/ui/sidebar";
 import React from "react";
-import { AppSidebar } from "./_components/AppSideBar";
+import { AppSidebar } from "./_components/AppSidebar";
 import Welcome from "./dashboard/_components/Welcome";
 
 function DashboardProvider({ children }) {
