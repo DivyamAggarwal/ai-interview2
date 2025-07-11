@@ -502,7 +502,7 @@ export default function Home() {
               Empowering professionals with AI-powered interview preparation
             </p>
             <p className="text-gray-400 mb-2">
-              © 2025 VoiceKit AI. Built with Next.js, Supabase & AI Magic
+              © 2025 VoiceKit AI. Built with Next.js, Supabase
             </p>
             <p className="text-sm text-gray-500">
               Made with ❤️ by{" "}
