@@ -107,23 +107,39 @@ Respond **only** with a valid JSON object in this exact structure:
 - Keep language natural and professional.
 - give minimum 10 question or more than that
 `;
-export const FEEDBACK_PROMPT=`{{conversation}}
-Depends on this Interview Conversation between assitant and user,
-Give me feedback for user interview. Give me rating out of 10 for technical Skills,
-Communication, Problem Solving, Experince. Also give me summery in 3 lines
-about the interview and one line to let me know whether is recommanded
-for hire or not with msg. Give me response in JSON format provide me more crisp recommendation what is the opinion
+export const FEEDBACK_PROMPT = `{{conversation}} 
+
+Based on this Interview Conversation between assistant and user, provide comprehensive feedback for the user's interview performance. 
+
+Analyze the following aspects with detailed reasoning:
+
+**Technical Skills (1-10):** Evaluate depth of knowledge, accuracy of responses, problem-solving approach, coding ability (if applicable), understanding of concepts, and ability to explain technical topics clearly.
+
+**Communication (1-10):** Assess clarity of expression, listening skills, ability to ask relevant questions, professional demeanor, confidence level, and how well they articulated their thoughts.
+
+**Problem Solving (1-10):** Judge analytical thinking, approach to challenges, creativity in solutions, ability to break down complex problems, and logical reasoning demonstrated.
+
+**Experience (1-10):** Consider relevant work history, practical application of skills, lessons learned from past roles, leadership examples, and how well they connected experience to the role.
+
+Provide a 3-line summary focusing on:
+1. Overall performance and standout qualities
+2. Key strengths and areas where they excelled
+3. Main areas for improvement or concerns
+
+Give a clear hiring recommendation with specific reasoning based on role requirements and candidate performance.
+
+Respond in JSON format:
+
 {
-  feedback:{
-    rating:{
-      techicalSkills:5,
-      communication:6,
-      problemSolving:4,
-      experince:7
+  "feedback": {
+    "rating": {
+      "technicalSkills": 5,
+      "communication": 6, 
+      "problemSolving": 4,
+      "experience": 7
     },
-    summary:<in 3 Line>,
-    Recommendation:"",
-    RecommendationMsg:""
+    "summary": ["Line 1 of summary", "Line 2 of summary", "Line 3 of summary"],
+    "Recommendation": "Recommended/Not Recommended/Conditionally Recommended/Highly Recommended",
+    "RecommendationMsg": "Brief message explaining the recommendation with specific reasons"
   }
-}
-`
+}`
