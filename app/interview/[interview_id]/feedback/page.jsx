@@ -13,10 +13,27 @@ function InterviewFeedback() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    if (interview_id) {
-      fetchFeedback()
-    }
-  }, [interview_id])
+  // Prevent multiple rapid auth changes from interfering
+  let timeoutId
+  
+  const delayedFetch = () => {
+    if (timeoutId) clearTimeout(timeoutId)
+    
+    timeoutId = setTimeout(() => {
+      if (interview_id) {
+        console.log('Auth settled - fetching feedback for:', interview_id)
+        fetchFeedback()
+      }
+    }, 3000) // Wait 3 seconds for auth to settle
+  }
+  
+  delayedFetch()
+  
+  return () => {
+    if (timeoutId) clearTimeout(timeoutId)
+  }
+}, [interview_id])
+
 
   const fetchFeedback = async () => {
     setLoading(true)
@@ -120,17 +137,19 @@ function InterviewFeedback() {
     }
   }
 
-  const calculateOverallScore = () => {
-    if (!feedback?.rating) return 0
-    const ratings = feedback.rating
-    const scores = [
-      ratings.technicalSkills || 0,
-      ratings.communication || 0,
-      ratings.problemSolving || 0,
-      ratings.experience || 0
-    ]
-    return (scores.reduce((sum, score) => sum + score, 0) / scores.length).toFixed(1)
-  }
+ const calculateOverallScore = () => {
+  if (!feedback?.rating) return 0
+  const ratings = feedback.rating
+  const scores = [
+    parseFloat(ratings.technicalSkills) || 0,
+    parseFloat(ratings.communication) || 0,
+    parseFloat(ratings.problemSolving) || 0,
+    parseFloat(ratings.experience) || 0
+  ]
+  const average = scores.reduce((sum, score) => sum + score, 0) / scores.length
+  return Number(average.toFixed(1))
+}
+
 
   if (loading) {
     return (
@@ -249,35 +268,42 @@ function InterviewFeedback() {
         )}
 
         {/* Overall Score & Recommendation */}
-        <div className="grid md:grid-cols-2 gap-8 mb-8">
-          
-          {/* Overall Performance */}
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Overall Performance</h2>
-            <div className="text-center">
-              <div className={`inline-flex items-center justify-center w-32 h-32 rounded-full text-4xl font-bold border-4 ${getScoreColor(calculateOverallScore())}`}>
-                {calculateOverallScore()}
-                <span className="text-2xl ml-1">/10</span>
-              </div>
-              <p className={`text-xl font-semibold mt-4 ${getScoreColor(calculateOverallScore())}`}>
-                {getScoreLabel(calculateOverallScore())}
-              </p>
+<div className="grid md:grid-cols-2 gap-8 mb-8">
+  
+  {/* Overall Performance */}
+  <div className="bg-white rounded-2xl shadow-lg p-8">
+    <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Overall Performance</h2>
+    <div className="text-center">
+      {(() => {
+        const overallScore = calculateOverallScore()
+        return (
+          <>
+            <div className={`inline-flex items-center justify-center w-32 h-32 rounded-full text-4xl font-bold border-4 ${getScoreColor(overallScore)}`}>
+              {overallScore}
+              <span className="text-2xl ml-1">/10</span>
             </div>
-          </div>
+            <p className={`text-xl font-semibold mt-4 ${getScoreColor(overallScore)}`}>
+              {getScoreLabel(overallScore)}
+            </p>
+          </>
+        )
+      })()}
+    </div>
+  </div>
 
-          {/* Recommendation */}
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Hiring Recommendation</h2>
-            <div className="text-center">
-              <div className={`inline-flex items-center px-8 py-4 rounded-full text-xl font-bold border-2 ${getRecommendationColor(feedback.recommendationText)}`}>
-                {feedback.recommendationText}
-              </div>
-              <p className="text-gray-600 mt-4 text-sm leading-relaxed">
-                {feedback.RecommendationMsg || 'Based on the interview assessment and scoring.'}
-              </p>
-            </div>
-          </div>
-        </div>
+  {/* Recommendation */}
+  <div className="bg-white rounded-2xl shadow-lg p-8">
+    <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Hiring Recommendation</h2>
+    <div className="text-center">
+      <div className={`inline-flex items-center px-8 py-4 rounded-full text-xl font-bold border-2 ${getRecommendationColor(feedback.recommendationText)}`}>
+        {feedback.recommendationText}
+      </div>
+      <p className="text-gray-600 mt-4 text-sm leading-relaxed">
+        {feedback.RecommendationMsg || 'Based on the interview assessment and scoring.'}
+      </p>
+    </div>
+  </div>
+</div>
 
         {/* Skills Assessment */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
