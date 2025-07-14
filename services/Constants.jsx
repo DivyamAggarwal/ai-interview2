@@ -107,39 +107,71 @@ Respond **only** with a valid JSON object in this exact structure:
 - Keep language natural and professional.
 - give minimum 10 question or more than that
 `;
-export const FEEDBACK_PROMPT = `{{conversation}} 
+export const FEEDBACK_PROMPT = `{{conversation}}
 
-Based on this Interview Conversation between assistant and user, provide comprehensive feedback for the user's interview performance. 
+You are an expert interview evaluator. Analyze the above interview conversation thoroughly and provide data-driven feedback based on the candidate's actual responses and performance.
 
-Analyze the following aspects with detailed reasoning:
+**IMPORTANT:** Do not use placeholder or default values. Every rating must be justified by specific evidence from the conversation.
 
-**Technical Skills (1-10):** Evaluate depth of knowledge, accuracy of responses, problem-solving approach, coding ability (if applicable), understanding of concepts, and ability to explain technical topics clearly.
+## Evaluation Criteria
 
-**Communication (1-10):** Assess clarity of expression, listening skills, ability to ask relevant questions, professional demeanor, confidence level, and how well they articulated their thoughts.
+**Technical Skills (1-10):**
+- Look for: Specific technical knowledge demonstrated, accuracy of technical explanations, coding problems solved, architectural understanding, best practices mentioned
+- Rate based on: Depth vs. surface-level responses, technical accuracy, ability to explain complex concepts simply
+- Evidence required: Quote specific technical statements or problem-solving approaches from the conversation
 
-**Problem Solving (1-10):** Judge analytical thinking, approach to challenges, creativity in solutions, ability to break down complex problems, and logical reasoning demonstrated.
+**Communication (1-10):**
+- Look for: Clarity of explanations, active listening (building on interviewer questions), professional language, confidence indicators, question-asking behavior
+- Rate based on: How well they structured answers, whether they sought clarification when needed, overall articulation quality
+- Evidence required: Note specific examples of clear/unclear communication from the dialogue
 
-**Experience (1-10):** Consider relevant work history, practical application of skills, lessons learned from past roles, leadership examples, and how well they connected experience to the role.
+**Problem Solving (1-10):**
+- Look for: Step-by-step thinking process, how they approached challenges, creative solutions, ability to break down problems, handling of follow-up questions
+- Rate based on: Logical flow of reasoning, consideration of edge cases, systematic approach vs. random guessing
+- Evidence required: Reference specific problem-solving instances from the conversation
 
-Provide a 3-line summary focusing on:
-1. Overall performance and standout qualities
-2. Key strengths and areas where they excelled
-3. Main areas for improvement or concerns
+**Experience (1-10):**
+- Look for: Concrete examples from past roles, specific projects mentioned, lessons learned, leadership situations, relevant industry experience
+- Rate based on: Relevance to target role, depth of examples, ability to extract learning from experience
+- Evidence required: Cite specific experience examples shared during the interview
 
-Give a clear hiring recommendation with specific reasoning based on role requirements and candidate performance.
+## Output Requirements
 
-Respond in JSON format:
+Provide a 3-line summary with:
+1. **Overall Assessment:** Candidate's strongest impression and general readiness level
+2. **Key Strengths:** Top 2-3 areas where they demonstrated excellence with specific examples
+3. **Development Areas:** Primary concerns or gaps that need addressing
+
+**Recommendation Categories:**
+- **Highly Recommended:** Exceptional performance across most areas
+- **Recommended:** Solid performance with minor gaps
+- **Conditionally Recommended:** Good potential but significant concerns in key areas
+- **Not Recommended:** Major deficiencies or poor fit
+
+## Response Format
 
 {
   "feedback": {
     "rating": {
-      "technicalSkills": 5,
-      "communication": 6, 
-      "problemSolving": 4,
-      "experience": 7
+      "technicalSkills": [ANALYZE_CONVERSATION_FOR_ACTUAL_SCORE],
+      "communication": [ANALYZE_CONVERSATION_FOR_ACTUAL_SCORE], 
+      "problemSolving": [ANALYZE_CONVERSATION_FOR_ACTUAL_SCORE],
+      "experience": [ANALYZE_CONVERSATION_FOR_ACTUAL_SCORE]
     },
-    "summary": ["Line 1 of summary", "Line 2 of summary", "Line 3 of summary"],
-    "Recommendation": "Recommended/Not Recommended/Conditionally Recommended/Highly Recommended",
-    "RecommendationMsg": "Brief message explaining the recommendation with specific reasons"
+    "summary": [
+      "Overall assessment with specific performance indicators",
+      "Key strengths demonstrated with concrete examples from conversation", 
+      "Primary development areas or concerns based on interview responses"
+    ],
+    "recommendation": "[Select based on actual performance analysis]",
+    "recommendationMsg": "Specific reasoning referencing conversation content and role requirements",
+    "evidenceBase": {
+      "technicalEvidence": "Quote or reference specific technical discussion points",
+      "communicationEvidence": "Note specific communication strengths/weaknesses observed",
+      "problemSolvingEvidence": "Reference specific problem-solving examples from interview",
+      "experienceEvidence": "Cite relevant experience examples candidate provided"
+    }
   }
-}`
+}
+
+**Critical:** Each rating must reflect actual conversation content. If insufficient information exists for any category, note this explicitly rather than assigning arbitrary scores.`
