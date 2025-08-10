@@ -1,4 +1,5 @@
-import React from 'react'
+"use client"
+import React, { useState, useEffect } from 'react'
 import Welcome from './_components/Welcome'
 import CreateOptions from './_components/CreateOptions'
 import { Lateef } from 'next/font/google'
@@ -6,6 +7,14 @@ import LatestInterviewsList from './_components/LatestInterviewsList'
 import { Activity, Calendar, Users, TrendingUp } from 'lucide-react'
 
 function Dashboard() {
+  const [currentDate, setCurrentDate] = useState('')
+
+  useEffect(() => {
+    const options = { weekday: 'long', month: 'long', day: 'numeric' }
+    const now = new Date()
+    setCurrentDate(now.toLocaleDateString('en-US', options))
+  }, [])
+
   return (
     <div className='space-y-8'>
       {/* Enhanced Dashboard Header */}
@@ -34,7 +43,7 @@ function Dashboard() {
               <div className='flex items-center space-x-6 text-sm'>
                 <div className='flex items-center space-x-2'>
                   <Calendar className='h-4 w-4 text-purple-200' />
-                  <span className='text-purple-100'>Today, July 11</span>
+                  <span className='text-purple-100'>Today, {currentDate}</span>
                 </div>
                 <div className='flex items-center space-x-2'>
                   <Users className='h-4 w-4 text-purple-200' />
@@ -68,22 +77,6 @@ function Dashboard() {
           </div>
         </div>
       </div>
-
-      {/* Quick Actions */}
-      {/* <div className='flex items-center justify-between'>
-        <div>
-          <h2 className='text-xl font-semibold text-gray-800'>Quick Actions</h2>
-          <p className='text-gray-500 text-sm'>Start creating interviews or manage existing ones</p>
-        </div>
-        <div className='flex items-center space-x-3'>
-          <button className='px-4 py-2 bg-purple-100 text-purple-600 rounded-lg hover:bg-purple-200 transition-colors text-sm font-medium'>
-            View All
-          </button>
-          <button className='px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium'>
-            + New Interview
-          </button>
-        </div>
-      </div> */}
 
       <CreateOptions/>
       <LatestInterviewsList/>
